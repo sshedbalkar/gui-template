@@ -1,0 +1,64 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "cd_workspace",
+            "type": "shell",
+            "command": "cd",
+            "args": [
+                "${workspaceRoot}"
+            ]
+        },
+        {
+            "label": "_mac_build",
+            "type": "shell",
+            "options": {
+                "cwd": "${workspaceRoot}"
+            },
+            "command": "${workspaceRoot}/scripts/mac_rebuild.sh",
+            "args": [],
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "mac_build",
+            "dependsOn": [
+                "cd_workspace",
+                "_mac_build"
+            ],
+            "dependsOrder": "sequence",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "mac_format_cpp_file",
+            "type": "shell",
+            "command": "${workspaceRoot}/scripts/mac_formatFile.sh",
+            "options": {
+                "cwd": "${workspaceRoot}"
+            },
+            "args": [
+                "${file}"
+            ],
+            "group": "none",
+            "presentation": {
+                "echo": false,
+                "reveal": "never",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": false,
+                "clear": false
+            },
+            "problemMatcher": "$gcc"
+        }
+    ]
+}
