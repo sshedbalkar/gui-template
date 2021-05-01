@@ -1,26 +1,17 @@
-##---------------------------------------------------
-## Please set your wxWidgets configuration here
-##--------------------------------------------------- 
- 
-# Here you can define what libraries of wxWidgets you need for your
-# application. You can figure out what libraries you need here;
-# https://www.wxwidgets.org/manuals/2.8/wx_librarieslist.html
-# We need the Find package for wxWidgets to work
-# NOTE: if you're using aui, include aui in this required components list.
 
-# It was noticed that when using MinGW gcc it is essential that 'core' is mentioned before 'base'.
-find_package(wxWidgets COMPONENTS aui adv html richtext core base gl REQUIRED)
- 
-##---------------------------------------------------
-## Actual config file starts here
-##--------------------------------------------------- 
- 
-# wxWidgets include (this will do all the magic to configure everything)
-include( "${wxWidgets_USE_FILE}" )
+find_package(PkgConfig REQUIRED)
+pkg_search_module(GLFW REQUIRED glfw3)
+
+find_package(OpenGL REQUIRED)
+include_directories(${OPENGL_INCLUDE_DIR})
+
+find_package(GLUT REQUIRED)
+include_directories(${GLUT_INCLUDE_DIR})
 
 # Add source files
-set(SOURCE_FILES Frame.cpp Frame.h Application.cpp Application.h)
+set(SOURCE_FILES Application.cpp Application.h)
 
+# message("CXX id: ${CMAKE_CXX_COMPILER_ID}")
 # If we build for windows systems, we also include the resource file
 # containing the manifest, icon and other resources
 if(WIN32)
@@ -29,13 +20,26 @@ endif(WIN32)
 
 # the above paths and defines will be used in this build
 add_executable(${CMAKE_PROJECT_NAME} WIN32 ${SOURCE_FILES})
+# set(RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin/$<CONFIG>)
 
+set_target_properties(${CMAKE_PROJECT_NAME}
+    PROPERTIES
+    ARCHIVE_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/bin/$<CONFIG>/lib"
+    LIBRARY_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/bin/$<CONFIG>/lib"
+    RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/bin/$<CONFIG>/bin"
+)
+
+# starget_compile_options(${CMAKE_PROJECT_NAME} PRIVATE $<$<CXX_COMPILER_ID:AppleClang,Clang>:-framework OpenGL> )
+target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE ${GLFW_LIBRARIES} ${OPENGL_LIBRARIES} ${GLUT_LIBRARIES}) 
+
+target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE ${GLFW_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR}/include)
 # Add to forty to the wxWidgets libraries. These are
 # set for  by the find script. Other needed libraries can be added here
-target_link_libraries(${CMAKE_PROJECT_NAME} ${wxWidgets_LIBRARIES})
+
+target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE ${GLFW_LIBRARY_DIRS})
 
 # copy the executable to the bin directory
-add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different 
-        $<TARGET_FILE:${CMAKE_PROJECT_NAME}>
-        "${PROJECT_SOURCE_DIR}/bin/$<CONFIG>" VERBATIM)
+# add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
+#     COMMAND ${CMAKE_COMMAND} -E copy_if_different 
+#         $<TARGET_FILE:${CMAKE_PROJECT_NAME}>
+#         "${PROJECT_SOURCE_DIR}/bin/$<CONFIG>" VERBATIM)

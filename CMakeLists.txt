@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.1)
 
 # Set the project name
-set(PROJECT_NAME wx-tut)
+set(PROJECT_NAME glfw-tut)
 project(${PROJECT_NAME} VERSION 0.1.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -18,5 +18,5 @@ set(CMAKE_COLOR_MAKEFILE ON)
 # See https://cmake.org/cmake/help/v3.4/variable/CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS.html
 # See https://blog.kitware.com/create-dlls-on-windows-without-declspec-using-new-cmake-export-all-feature/
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
-
+# message("Output dir: ${CMAKE_BINARY_DIR}")
 add_subdirectory(src)
